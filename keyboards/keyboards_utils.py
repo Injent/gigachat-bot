@@ -2,6 +2,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 
+# Создание клавиатуры с двумя колонками
 def create_double_column_keyboard(actions: list[str]) -> ReplyKeyboardMarkup:
     keyboard = []
     row = []
@@ -15,6 +16,7 @@ def create_double_column_keyboard(actions: list[str]) -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 
 
+# Создание клавиатуры в колонку
 def create_one_select_keyboard(options: list[str]) -> ReplyKeyboardMarkup:
     keyboard: list[list[KeyboardButton]] = []
 

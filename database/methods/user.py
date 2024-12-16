@@ -4,6 +4,7 @@ from database.database import session_factory
 from database.models import User, ChatStyle, ChatAge, AnswerLength
 
 
+# Создание модели user
 async def create_user(user_id: int, name: str):
     async with session_factory() as s:
         if await s.get(User, user_id):
@@ -20,11 +21,13 @@ async def create_user(user_id: int, name: str):
         await s.commit()
 
 
+# Получение модели user
 async def get_user(user_id: int) -> User:
     async with session_factory() as s:
         return await s.get(User, user_id)
 
 
+# Установка значения premium
 async def set_premium(user_id: int, premium: bool):
     async with session_factory() as s:
         user = await s.get(User, user_id)
@@ -33,6 +36,7 @@ async def set_premium(user_id: int, premium: bool):
         await s.commit()
 
 
+# Получения значения premium
 async def has_premium(user_id: int) -> bool:
     async with session_factory() as s:
         user = await s.get(User, user_id)
@@ -40,6 +44,7 @@ async def has_premium(user_id: int) -> bool:
         return user.has_premium
 
 
+# Применение настроек в БД
 async def set_user_prefs(
         user_id,
         chat_style: [ChatStyle|None] = None,

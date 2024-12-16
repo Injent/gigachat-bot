@@ -9,6 +9,7 @@ from states.state import MenuState
 router = Router()
 
 
+# Отображение меню на /start
 @router.message(CommandStart())
 async def welcome(message: Message, state: FSMContext):
     await message.delete()
@@ -16,11 +17,13 @@ async def welcome(message: Message, state: FSMContext):
     await set_menu_message(message, state)
 
 
+# Отображение меню по колбэк
 @router.callback_query(F.data == 'menu')
 async def menu(callback: CallbackQuery, state: FSMContext):
     await set_menu_message(callback.message, state)
 
 
+# Отправка сообщения с меню
 async def set_menu_message(
         message: Message,
         state: FSMContext
@@ -36,6 +39,7 @@ async def set_menu_message(
     return m.message_id
 
 
+# Функции утилиты для создания контента для сообщения menu
 def __create_main_menu_text__(premium: bool) -> str:
     if premium:
         status = '🥇 Pro версия GigaChat'

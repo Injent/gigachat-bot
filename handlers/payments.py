@@ -12,7 +12,7 @@ from handlers.menu import set_menu_message
 router = Router()
 
 
-
+# Запуск отправки сообщения с оплатой
 @router.callback_query(F.data == 'payments')
 async def payment(callback: CallbackQuery):
     await callback.message.answer_invoice(
@@ -33,12 +33,15 @@ async def payment(callback: CallbackQuery):
     )
 
 
+# Пост обработка оплаты
 @router.pre_checkout_query()
 async def process_pre_checkout_query(query: PreCheckoutQuery):
     await query.bot.answer_pre_checkout_query(pre_checkout_query_id=query.id, ok=True)
 
 
+# Действия на успехе оплаты
 @router.message(F.successful_payment)
 async def success_plan_upgrade(message: Message, state: FSMContext):
+    # Установка премиума пользователю оплатившему premium
     await set_premium(user_id=message.chat.id, premium=True)
     await set_menu_message(message, state)

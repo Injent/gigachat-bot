@@ -3,6 +3,7 @@ from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardBut
 
 router = Router()
 
+# Обработка кодлбэка кнопки Помощь
 @router.callback_query(F.data == 'help')
 async def process_help(callback: CallbackQuery):
     await callback.message.answer(

@@ -12,6 +12,7 @@ from handlers.help import router as help_router
 
 bot = Bot(token=config.tg_bot.token)
 
+
 async def main():
     dp = Dispatcher()
 

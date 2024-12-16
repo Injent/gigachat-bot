@@ -3,7 +3,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, Message, ReplyKeyboardRemove
 
 from database.methods.user import set_user_prefs, get_user
-from handlers.menu import set_menu_message
 from keyboards.keyboards_utils import create_one_select_keyboard, create_double_column_keyboard
 from states.state import SettingsState
 from util.context_prompts import CHAT_STYLES, CHAT_AGE, ANSWER_LENGTH, get_option_by_name
@@ -11,11 +10,13 @@ from util.context_prompts import CHAT_STYLES, CHAT_AGE, ANSWER_LENGTH, get_optio
 router = Router()
 
 
+# Вызов меню настроек
 @router.callback_query(F.data == 'settings')
 async def settings(callback: CallbackQuery, state: FSMContext):
     await __set_settings__(callback.message, state)
 
 
+# Вызов ввода стиля чата
 @router.callback_query(SettingsState.main, F.data == 'chat_style')
 async def chat_style(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
@@ -25,6 +26,7 @@ async def chat_style(callback: CallbackQuery, state: FSMContext):
     await state.set_state(SettingsState.input_chat_style)
 
 
+# Вызов ввода целевой аудитории ответа
 @router.callback_query(SettingsState.main, F.data == 'chat_age')
 async def chat_age(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
@@ -34,6 +36,7 @@ async def chat_age(callback: CallbackQuery, state: FSMContext):
     await state.set_state(SettingsState.input_chat_age)
 
 
+# Вызов ввода длины ответа
 @router.callback_query(SettingsState.main, F.data == 'answer_length')
 async def answer_length(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
@@ -43,6 +46,7 @@ async def answer_length(callback: CallbackQuery, state: FSMContext):
     await state.set_state(SettingsState.input_answer_length)
 
 
+# Обработка длины ответа
 @router.message(SettingsState.input_chat_style)
 async def accept_chat_style(message: Message, state: FSMContext):
     style = message.text
@@ -55,6 +59,7 @@ async def accept_chat_style(message: Message, state: FSMContext):
     await __apply_settings__(message, state)
 
 
+# Обработка возраста ответа
 @router.message(SettingsState.input_chat_age)
 async def accept_chat_age(message: Message, state: FSMContext):
     age = message.text
@@ -67,6 +72,7 @@ async def accept_chat_age(message: Message, state: FSMContext):
     await __apply_settings__(message, state)
 
 
+# Обработка длины ответа
 @router.message(SettingsState.input_answer_length)
 async def accept_answer_length(message: Message, state: FSMContext):
     length = message.text
@@ -79,6 +85,8 @@ async def accept_answer_length(message: Message, state: FSMContext):
     await __apply_settings__(message, state)
 
 
+
+# Отправка сообщения сохранения настроек
 async def __apply_settings__(message: Message, state: FSMContext):
     await message.answer(
         text='✅ Настройки сохранены',
@@ -87,6 +95,7 @@ async def __apply_settings__(message: Message, state: FSMContext):
     await __set_settings__(message, state)
 
 
+# Отправка меню настроек
 async def __set_settings__(message: Message, state: FSMContext):
     user = await get_user(message.chat.id)
 
@@ -102,6 +111,7 @@ async def __set_settings__(message: Message, state: FSMContext):
     await state.set_state(SettingsState.main)
 
 
+# Получение клавиатуры от меню настроек
 def __create_settings_keyboard__() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[

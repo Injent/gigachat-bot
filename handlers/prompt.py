@@ -8,6 +8,7 @@ from keyboards.keyboards_utils import create_double_column_keyboard
 from states.state import PromptState
 from util.context_prompts import create_prompt, CHAT_STYLES, CHAT_AGE, ANSWER_LENGTH
 
+# Варианты шаблонов в конструкторе промптов
 characters = [
     'Инженер с 30 летним опытом',
     'UI дизайнер с 30 летним опытом',
@@ -34,6 +35,7 @@ text_actions = [
 router = Router()
 
 
+# Запуск ввода действия
 @router.callback_query(F.data == 'ask')
 async def ask(callback: CallbackQuery, state: FSMContext):
     await state.set_state(PromptState.param_action)
@@ -43,6 +45,7 @@ async def ask(callback: CallbackQuery, state: FSMContext):
     )
 
 
+# Обработка введенного действия
 @router.message(PromptState.param_action)
 async def ask(message: Message, state: FSMContext):
     await state.set_state(PromptState.param_character)
@@ -52,6 +55,7 @@ async def ask(message: Message, state: FSMContext):
         reply_markup=create_double_column_keyboard(actions=characters)
     )
 
+# Обработка введенного лица
 @router.message(PromptState.param_character)
 async def process_character(message: Message, state: FSMContext):
     await state.set_state(PromptState.param_format)
@@ -62,6 +66,7 @@ async def process_character(message: Message, state: FSMContext):
     )
 
 
+# Обработка формата текста
 @router.message(PromptState.param_format)
 async def process_format(message: Message, state: FSMContext):
     await state.update_data(format=message.text)
@@ -72,8 +77,10 @@ async def process_format(message: Message, state: FSMContext):
     )
 
 
+# Обработка вопроса
 @router.message(PromptState.question)
 async def process_question(message: Message, state: FSMContext):
+    # Получение данных из FSMContext на основе предыдущих сообщений
     user = await get_user(message.chat.id)
     data = await state.get_data()
     action = data['action']
@@ -81,6 +88,7 @@ async def process_question(message: Message, state: FSMContext):
     form = data['format']
     question = message.text
 
+    # Создание промпта
     prompt = create_prompt(
         text=question,
         action=action,
@@ -90,11 +98,14 @@ async def process_question(message: Message, state: FSMContext):
         char=character,
         form=form
     )
+
+    # Отправка сообщения загрузки
     m_id = (await message.bot.send_message(
         chat_id=message.chat.id,
         text='Обработка текста...'
     )).message_id
 
+    # Редакция сообщения загрузка на результат
     response = await answer_gigachat(prompt)
     await message.bot.edit_message_text(
         text=response,

@@ -1,6 +1,6 @@
 from aiogram.fsm.state import StatesGroup, State
 
-
+# Состояния бота
 class MenuState(StatesGroup):
     main = State()
     settings = State()

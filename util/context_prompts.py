@@ -25,11 +25,13 @@ ANSWER_LENGTH = {
 }
 
 
+# Получение enum из БД по сообщению из чата
 def get_option_by_name(data: dict[enum.Enum, str], option_name: str) -> enum.Enum:
     inv_map = {v: k for k, v in data.items()}
     return inv_map[option_name]
 
 
+# Создание шаблона промпта
 def create_prompt(text: str, action: str, style: str, age: str, length: str, char: str, form: str) -> str:
     return f"""
         Не используй MarkDown или HTML в своем ответе. Напиши свой ответ исключительно в виде текста без форматирования\n

@@ -6,8 +6,11 @@ from sqlalchemy.orm import mapped_column, Mapped
 
 from database.database import Base
 
+# Аннотация для sqlalchemy, обозначающая primary key
 pk = Annotated[int, mapped_column(primary_key=True)]
 
+
+# Енумы для БД
 
 class ChatAge(enum.Enum):
     all = 0
@@ -32,6 +35,7 @@ class AnswerLength(enum.Enum):
     full = 3
 
 
+# Модель таблицы пользователя
 class User(Base):
     __tablename__ = 'user'
 
